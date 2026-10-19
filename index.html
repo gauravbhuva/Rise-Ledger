@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101114">
+  <meta name="description" content="Offline-first personal finance ledger">
+  <title>RupeeLedger</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">₹</div>
+        <div><div class="brand-name">RupeeLedger</div><div class="brand-sub">Your money, accounted for.</div></div>
+      </div>
+      <button id="installBtn" class="icon-btn hidden" aria-label="Install app" title="Install app">＋</button>
+    </header>
+
+    <main>
+      <section id="view-dashboard" class="view active">
+        <div class="welcome-row">
+          <div><p class="eyebrow">YOUR FINANCIAL OVERVIEW</p><h1>Dashboard</h1></div>
+          <button class="primary-btn" data-open-modal="transactionModal">＋ <span>Add entry</span></button>
+        </div>
+        <div class="hero-card">
+          <div class="hero-top"><span>Personal debt outstanding</span><span class="pill">LIVE BALANCE</span></div>
+          <div id="personalDebt" class="hero-amount">₹0.00</div>
+          <div class="hero-foot"><span>Amount you still owe people or organizations</span><span class="hero-icon">↗</span></div>
+        </div>
+        <div class="metric-grid">
+          <article class="metric-card"><div class="metric-label">Setup cost unpaid</div><div id="setupUnpaid" class="metric-value">₹0.00</div><div class="metric-note">Still due to sellers/providers</div></article>
+          <article class="metric-card"><div class="metric-label">Available money</div><div id="availableMoney" class="metric-value">₹0.00</div><div class="metric-note">Across tracked accounts</div></article>
+          <article class="metric-card"><div class="metric-label">Income this month</div><div id="monthIncome" class="metric-value positive">₹0.00</div><div class="metric-note">Money received</div></article>
+          <article class="metric-card"><div class="metric-label">Expenses this month</div><div id="monthExpenses" class="metric-value negative">₹0.00</div><div class="metric-note">Spending recorded</div></article>
+        </div>
+        <section class="section-block">
+          <div class="section-heading"><div><p class="eyebrow">RECENT ACTIVITY</p><h2>Latest entries</h2></div><button class="text-btn" data-nav="transactions">View all <span>→</span></button></div>
+          <div id="recentTransactions" class="list-card"></div>
+        </section>
+        <section class="section-block">
+          <div class="section-heading"><div><p class="eyebrow">OUTSTANDING</p><h2>People & obligations</h2></div><button class="text-btn" data-nav="obligations">View all <span>→</span></button></div>
+          <div id="dashboardObligations" class="list-card"></div>
+        </section>
+      </section>
+
+      <section id="view-transactions" class="view">
+        <div class="page-heading"><div><p class="eyebrow">YOUR COMPLETE HISTORY</p><h1>Transactions</h1></div><button class="primary-btn" data-open-modal="transactionModal">＋ <span>Add entry</span></button></div>
+        <div class="toolbar"><input id="transactionSearch" type="search" placeholder="Search entries…" aria-label="Search transactions"><select id="transactionFilter" aria-label="Filter transactions"><option value="all">All types</option><option value="income">Income</option><option value="expense">Expense</option><option value="transfer">Transfer</option><option value="repayment">Cash repayment</option><option value="work">Work credit</option><option value="purchase_payment">Seller payment</option></select></div>
+        <div id="allTransactions" class="list-card"></div>
+      </section>
+
+      <section id="view-obligations" class="view">
+        <div class="page-heading"><div><p class="eyebrow">PEOPLE, ITEMS & BALANCES</p><h1>Obligations</h1></div><button class="primary-btn" data-open-modal="obligationModal">＋ <span>Add item</span></button></div>
+        <p class="page-intro">Record who covered a purchase, what you personally owe them, and what is still unpaid to the seller. These are separate balances.</p>
+        <div id="obligationSummary" class="summary-strip"></div>
+        <div id="allObligations" class="obligation-list"></div>
+      </section>
+
+      <section id="view-reports" class="view">
+        <div class="page-heading"><div><p class="eyebrow">UNDERSTAND YOUR MONEY</p><h1>Reports</h1></div></div>
+        <div class="report-grid">
+          <article class="metric-card"><div class="metric-label">Income this month</div><div id="reportIncome" class="metric-value positive">₹0.00</div></article>
+          <article class="metric-card"><div class="metric-label">Expenses this month</div><div id="reportExpenses" class="metric-value negative">₹0.00</div></article>
+          <article class="metric-card"><div class="metric-label">Net cash flow</div><div id="reportNet" class="metric-value">₹0.00</div></article>
+          <article class="metric-card"><div class="metric-label">Cash repayments</div><div id="reportRepayments" class="metric-value">₹0.00</div></article>
+        </div>
+        <section class="section-block"><div class="section-heading"><div><p class="eyebrow">MONTHLY SUMMARY</p><h2>Recent months</h2></div></div><div id="monthlyReport" class="list-card"></div></section>
+      </section>
+
+      <section id="view-settings" class="view">
+        <div class="page-heading"><div><p class="eyebrow">YOUR DATA, YOUR CONTROL</p><h1>Data & settings</h1></div></div>
+        <div class="settings-card">
+          <div class="settings-icon">⇧</div><div class="settings-copy"><h3>Export backup</h3><p>Download all your records as a JSON backup. Store it somewhere safe.</p></div><button id="exportBtn" class="secondary-btn">Export</button>
+        </div>
+        <div class="settings-card">
+          <div class="settings-icon">⇩</div><div class="settings-copy"><h3>Restore backup</h3><p>Restore a previous RupeeLedger JSON backup. This replaces current local data.</p></div><label class="secondary-btn file-label">Choose file<input id="importFile" type="file" accept=".json,application/json" hidden></label>
+        </div>
+        <div class="settings-card">
+          <div class="settings-icon">▤</div><div class="settings-copy"><h3>Export transactions</h3><p>Download a CSV file for spreadsheets or long-term portability.</p></div><button id="csvBtn" class="secondary-btn">Export CSV</button>
+        </div>
+        <div class="settings-card">
+          <div class="settings-icon">◉</div><div class="settings-copy"><h3>Storage status</h3><p id="storageStatus">Checking local storage…</p></div><span class="status-dot"></span>
+        </div>
+        <div class="warning-card"><strong>Important</strong><p>This first version stores records in this browser on this device. Clearing browser site data can erase records. Export backups regularly. Cloud synchronization is not enabled.</p></div>
+        <button id="clearBtn" class="danger-btn">Delete all local data</button>
+        <p class="fine-print">RupeeLedger is an early prototype. Verify balances against your own records before relying on it for financial decisions.</p>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <button class="nav-item active" data-nav="dashboard"><span class="nav-icon">⌂</span><span>Home</span></button>
+      <button class="nav-item" data-nav="transactions"><span class="nav-icon">↔</span><span>Activity</span></button>
+      <button class="nav-item" data-nav="obligations"><span class="nav-icon">◎</span><span>Debts</span></button>
+      <button class="nav-item" data-nav="reports"><span class="nav-icon">▥</span><span>Reports</span></button>
+      <button class="nav-item" data-nav="settings"><span class="nav-icon">⚙</span><span>Data</span></button>
+    </nav>
+  </div>
+
+  <dialog id="transactionModal" class="modal">
+    <form id="transactionForm" class="modal-form">
+      <div class="modal-head"><div><p class="eyebrow">LEDGER ENTRY</p><h2>Add transaction</h2></div><button type="button" class="close-btn" data-close-modal>×</button></div>
+      <label>Entry type<select id="txType" name="type" required><option value="expense">Expense</option><option value="income">Income</option><option value="transfer">Transfer between own accounts</option><option value="repayment">Cash repayment to a person</option><option value="work">Work-based repayment credit</option><option value="purchase_payment">Payment to seller/provider</option></select></label>
+      <label>Amount (₹)<input name="amount" inputmode="decimal" type="number" min="0.01" step="0.01" placeholder="0.00" required></label>
+      <label>Description<input name="description" maxlength="140" placeholder="e.g. Freelance editing payment" required></label>
+      <div class="form-row"><label>Date<input name="date" type="date" required></label><label>Category<select name="category"><option>General</option><option>Food</option><option>Transport</option><option>Shopping</option><option>Subscriptions</option><option>Education</option><option>Freelance</option><option>Setup</option><option>Utilities</option><option>Health</option><option>Other</option></select></label></div>
+      <label>Account<select name="account" id="txAccount"><option value="Cash">Cash</option><option value="Bank account">Bank account</option><option value="UPI">UPI</option><option value="Credit card">Credit card</option><option value="Other">Other</option></select></label>
+      <div id="transferFields" class="conditional hidden"><label>Destination account<select name="toAccount"><option>Bank account</option><option>UPI</option><option>Cash</option><option>Credit card</option><option>Other</option></select></label></div>
+      <div id="obligationFields" class="conditional hidden"><label>Apply to item<select name="obligationId" id="txObligation"><option value="">Choose an item…</option></select></label><p class="field-help">A repayment reduces the selected personal debt. A seller payment reduces the unpaid seller balance. Work credit reduces personal debt only when you select the relevant item.</p></div>
+      <button class="primary-btn full-width" type="submit">Save entry</button>
+      <p class="field-help">Transactions are recorded once. Balances are calculated from the ledger.</p>
+    </form>
+  </dialog>
+
+  <dialog id="obligationModal" class="modal">
+    <form id="obligationForm" class="modal-form">
+      <div class="modal-head"><div><p class="eyebrow">PURCHASE REGISTER</p><h2>Add purchase item</h2></div><button type="button" class="close-btn" data-close-modal>×</button></div>
+      <label>Item name<input name="item" maxlength="100" placeholder="e.g. Monitor" required></label>
+      <label>Person / organization you owe<input name="person" maxlength="100" placeholder="e.g. Family member or office" required></label>
+      <label>Original item cost (₹)<input name="cost" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" required></label>
+      <label>Personal amount owed for this item (₹)<input name="personalOwed" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" required></label>
+      <label>Still unpaid to seller/provider (₹)<input name="sellerUnpaid" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" required></label>
+      <label>Repayment method<select name="method"><option value="cash">Cash repayment</option><option value="work">Work-based repayment</option><option value="mixed">Mixed</option><option value="emi">EMI / financed</option></select></label>
+      <label>Notes (optional)<textarea name="notes" rows="2" maxlength="300" placeholder="Who paid, EMI details, or anything to remember"></textarea></label>
+      <button class="primary-btn full-width" type="submit">Save item</button>
+      <p class="field-help">Personal amount owed and seller amount unpaid are independent. For example, a seller can be fully paid while you still owe a family member.</p>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="./app.js"></script>
+</body>
+</html>

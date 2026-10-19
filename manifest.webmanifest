@@ -1,0 +1,19 @@
+{
+  "name": "RupeeLedger - Personal Finance",
+  "short_name": "RupeeLedger",
+  "description": "Offline-first personal finance ledger",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#101114",
+  "theme_color": "#101114",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
